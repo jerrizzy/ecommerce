@@ -55,6 +55,18 @@
         "quantity": 1242
       }
     ],
+    "check_session" : [
+        {
+            "id": 1,
+            "username": "j",
+            "pass": "1"
+        },
+        {
+            "id": 2,
+            "username": "b",
+            "pass": "1"
+        }
+    ],
     "cart-products": [
       {
         "name": "Classic White T-Shirt",

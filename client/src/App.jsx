@@ -1,20 +1,18 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import Navbar from "./components/Navbar";
-import { Outlet } from "react-router-dom";
+import Navbar from "./components/NavBar"
+import { Outlet, useLoaderData } from "react-router-dom"
 
 
 function App() {
   
-  const [cartCount, setCartCount] = useState(0)
+  const user = useLoaderData()
 
   return (
     <div>
-      <Navbar cartCount={cartCount} />
+      <Navbar  />
      
 
       <div className="container">
-        
+      <Outlet context={[user]} />
       </div>
 
       {/* <footer>This is the footer</footer> */}

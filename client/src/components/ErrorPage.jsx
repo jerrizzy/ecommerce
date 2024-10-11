@@ -1,9 +1,5 @@
-import React from 'react'
-
-function ErrorPage() {
+export default function ErrorPage() {
   return (
-    <div>ErrorPage</div>
+    <h1>Something went wrong! :(</h1>
   )
 }
-
-export default ErrorPage

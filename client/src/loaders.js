@@ -1,10 +1,14 @@
 async function userLoader({ request, params }) {
-    const res = await fetch('http://127.0.0.1:5555/check_session', {
-        method: 'GET',
-        credentials: 'include'
+    const res = await fetch('http://localhost:8000/check_session', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+     
       })
       .then(resp => {
         if (resp.ok) {
+          console.log(resp.json())
           return resp.json()
         } else {
           return {}
@@ -15,13 +19,13 @@ async function userLoader({ request, params }) {
   
   
   async function productListLoader({ request, params }) {
-    const res = await fetch("http://127.0.0.1:5555/dogs")
+    const res = await fetch("http://localhost:8000/products")
       .then(resp => resp.json())
     return res
   }
   
   async function productPageLoader({ request, params }) {
-    const res = await fetch(`http://127.0.0.1:5555/dogs/${params.id}`)
+    const res = await fetch(`http://localhost:8000/products/${params.id}`)
       .then(resp => resp.json())
     return res
   }
@@ -31,7 +35,7 @@ async function userLoader({ request, params }) {
     // to get the form data. Here, we're just assuming it's a JSON object.
     const formData = JSON.parse(request.postBody)
 
-    const res = await fetch('http://127.0.0.1:5555/dogs', {
+    const res = await fetch('http://localhost:8000/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
