@@ -1,3 +1,4 @@
+import './App.css';
 import Navbar from "./components/NavBar"
 import { Outlet, useLoaderData } from "react-router-dom"
 

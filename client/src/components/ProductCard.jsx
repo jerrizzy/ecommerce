@@ -8,7 +8,7 @@ function ProductCard({ id, product }) {
       <img src={product.image} alt={name} />
       <h3>{product.name}</h3>
       <p>{product.price}</p>
-      <button className="add-to-cart">Add to Cart ��</button>
+      <button className="add-to-cart">Add to Cart</button>
     </div>
 
     </Link>

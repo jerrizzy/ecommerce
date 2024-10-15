@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className='navbar'>
         <h1 className="logo">Amaze-zone</h1>
 
-        <div>
+            <ul>
             <NavLink to="/" exact activeClassName="active">
                 Home
             </NavLink>
@@ -24,7 +24,8 @@ const Navbar = () => {
             <NavLink to="/cart" activeClassName="active">
                 🛒
             </NavLink>
-        </div>
+            </ul>
+            
     </nav> 
   )
 }
