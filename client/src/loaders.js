@@ -30,26 +30,10 @@ async function userLoader({ request, params }) {
     return res
   }
 
-  async function newProductLoader({ request, params }) {
-    // In a real-world application, you'd use request.postBody or request.formData
-    // to get the form data. Here, we're just assuming it's a JSON object.
-    const formData = JSON.parse(request.postBody)
-
-    const res = await fetch('http://localhost:8000/products', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    return res.json()
-  }
-
 
   
   export {
     userLoader, 
     productListLoader,
     productPageLoader,
-    newProductLoader,
   }

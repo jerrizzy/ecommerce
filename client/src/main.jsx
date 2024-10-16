@@ -16,7 +16,7 @@ import {
   userLoader,
   productListLoader,
   productPageLoader,
-  newProductLoader,
+ 
 } from './loaders.js'
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -62,11 +62,7 @@ const router = createBrowserRouter([
         element: <ProductList />,
         loader: productListLoader
       },
-      {
-        path: '/newproducts',
-        element: <NewProduct />,
-        loader: newProductLoader
-      }
+      
     ]
   }
 ])
