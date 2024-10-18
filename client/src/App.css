@@ -84,3 +84,52 @@ a.active {
     /* box-shadow: none; */
 }
 
+@media screen and (max-width: 1200px) {
+    .container {
+      padding: 20px 10px;
+      /* Adjusts padding for smaller screens */
+    }
+}
+
+/* Resetting default margin and padding */
+
+
+.product-detail-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+      background-image: linear-gradient(135deg, #ff9900 0%, #ff5f6d 100%);
+    height: 100vh;
+    width: 100%;
+    /* Light background */
+}
+
+.product-detail {
+    width: 80%;
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    /* White background for the product detail */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    /* Soft shadow for depth */
+    padding: 20px;
+  }
+
+.product-detail img {
+    width: 50%;
+    max-width: 300px;
+    border-radius: 10px;
+    /* Rounded corners for the image */
+    margin-right: 20px;
+}
+
+.product-detail-info {
+    flex: 1;
+}
+
+.product-detail-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}

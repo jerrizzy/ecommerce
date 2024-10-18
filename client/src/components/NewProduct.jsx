@@ -51,8 +51,11 @@ function NewProduct() {
     setFormData({...formData, image: event.target.value})
   }
 
+  const errorElement = error ? <p style={{color: 'red'}}>{error.error}</p> : null
+
   return (
     <div>
+      {errorElement}
     <form onSubmit={handleSubmit}>
     <label>Image URL: </label>
     <input name="imageUrl" type="text" onChange={handleImageChange} value={formData.image} /><br />
