@@ -27,6 +27,60 @@ a.active {
     background-color: #555;
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+home component 
+.banner {
+    background-image: linear-gradient(135deg, #ff9900 0%, #ff5f6d 100%);
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    border-radius: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    height: 100vh;
+    /* Make the banner full height of the viewport */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .banner h1 {
+    margin: 0;
+    font-size: 3em;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  
+  .banner p {
+    font-size: 1.5em;
+    margin: 20px auto;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  
+  .banner button {
+    background-color: #ffffff;
+    color: #ff5f6d;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .banner button:hover {
+    background-color: #ffedc2;
+}
+
 .product-list {
     display: flex;
     flex-direction: row;
@@ -132,4 +186,42 @@ a.active {
 .product-detail-info h1 {
     font-size: 24px;
     margin-bottom: 10px;
+}
+
+.price {
+    font-size: 18px;
+    color: #333;
+    /* Dark color for price */
+}
+
+.availability {
+    font-size: 16px;
+    color: #666;
+    /* Medium-dark color for availability */
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 16px;
+    color: #666;
+    /* Medium-dark color for description */
+    margin-bottom: 20px;
+}
+
+.add-to-cart {
+    background-color: #333;
+    /* Dark background for button */
+    color: #fff;
+    /* White text for contrast */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart:hover {
+    background-color: #555;
+    /* Darker shade on hover */
 }

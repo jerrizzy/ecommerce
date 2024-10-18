@@ -6,7 +6,7 @@ const Navbar = () => {
 
   return (
     <nav className='navbar'>
-        <h1 className="logo">Amaze-zone</h1>
+        <h1 className="logo">Health-zone</h1>
 
             <ul>
             <NavLink to="/" exact activeClassName="active">

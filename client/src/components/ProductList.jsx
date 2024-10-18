@@ -7,7 +7,7 @@ function ProductList() {
   console.log(products)
 
   return (
-    <div>Products
+    <div>
       <div className="product-list">
         {products.map((product) => (
           <ProductCard 

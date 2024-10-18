@@ -18,7 +18,7 @@ function ProductPage() {
 
   return (
     <div className="product-detail-page">
-      <h1>Item details</h1>
+      
       <div className="product-detail">
       <img src={products.image} />
       <div className="product-detail-info">
