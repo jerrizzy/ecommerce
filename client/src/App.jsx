@@ -1,5 +1,6 @@
 import './App.css';
-import Navbar from "./components/NavBar"
+import Navbar from "./components/Navbar";
+import Footer from './components/Footer';
 import { Outlet, useLoaderData } from "react-router-dom"
 
 
@@ -16,7 +17,7 @@ function App() {
       <Outlet context={[user]} />
       </div>
 
-      {/* <footer>This is the footer</footer> */}
+      <Footer />
     </div>
   )
 }

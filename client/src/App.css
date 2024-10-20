@@ -1,227 +1,95 @@
-.container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    height: 100%;
-  }
 
-a {
-    text-decoration: none;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-li {
-    display: inline;
-}
-
-a:hover {
-    background-color: #555;
-}
-
-a.active {
-    background-color: #555;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: Arial, sans-serif;
-}
-
-home component 
-.banner {
-    background-image: linear-gradient(135deg, #ff9900 0%, #ff5f6d 100%);
-    color: white;
-    text-align: center;
-    padding: 100px 20px;
-    border-radius: 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    height: 100vh;
-    /* Make the banner full height of the viewport */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .banner h1 {
-    margin: 0;
-    font-size: 3em;
-    font-weight: 700;
-    letter-spacing: -1px;
-  }
-  
-  .banner p {
-    font-size: 1.5em;
-    margin: 20px auto;
-    max-width: 600px;
-    line-height: 1.5;
-  }
-  
-  .banner button {
-    background-color: #ffffff;
-    color: #ff5f6d;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.2em;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .banner button:hover {
-    background-color: #ffedc2;
-}
-
+/* Styles for the product list container */
 .product-list {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
     flex-wrap: wrap;
-}
-
-.product-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 30px;
-    padding: 10px;
-    width: 200px;
-    height: 300px;
-}
-
-.product-card img {
-    width: 100%;
-    height:200px;
-    object-fit: cover;
-    border-radius: 15px;
-}
-
-/* .add-to-cart {
-    border-radius: 8px;
-} */
-
-.product-card h3{
-    font-size: 20px;
-    margin: 10px;
-}
-
-.product-card p{
-    font-size: 16px;
-    margin: 10px;
-}
-
-.product-card button:hover{
-  background-color: #464646;
-}
-
-.product-card button{
-    margin: 10px;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    background-color: transparent;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    border: 1px solid #464646;
-    /* box-shadow: none; */
-}
-
-@media screen and (max-width: 1200px) {
-    .container {
-      padding: 20px 10px;
-      /* Adjusts padding for smaller screens */
-    }
-}
-
-/* Resetting default margin and padding */
-
-
-.product-detail-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-      background-image: linear-gradient(135deg, #ff9900 0%, #ff5f6d 100%);
-    height: 100vh;
-    width: 100%;
-    /* Light background */
-}
-
-.product-detail {
-    width: 80%;
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    /* White background for the product detail */
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    /* Soft shadow for depth */
+    justify-content: space-between; /* Ensures even space between product cards */
+    gap: 30px; /* Adds space between rows and columns */
+    padding: 40px 50px; /* Adds some padding around the product grid */
+  }
+  
+  /* Styles for individual product cards */
+  .product-card {
+    flex: 1 1 300px; /* Ensures a minimum width of 300px but allows flexibility */
+    max-width: 300px; /* Keeps all cards the same width */
+    text-align: center; /* Center-aligns text and images */
     padding: 20px;
+    border-radius: 8px; /* Slightly rounded corners for the card */
+    background-color: #fff; /* White background for each card */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adds subtle shadow for a modern look */
+    transition: transform 0.3s ease; /* Smooth transition on hover */
+    position: relative;
+  }
+  
+  /* Hover effect for the product card */
+  .product-card:hover {
+    transform: translateY(-5px); /* Slight lift effect on hover */
+  }
+  
+  /* Product image styling */
+  .product-card img {
+    max-width: 100%; /* Ensures the image fits the card */
+    height: auto; /* Preserves image aspect ratio */
+    border-radius: 8px; /* Slightly rounded corners on the image */
+    margin-bottom: 15px; /* Space between the image and text */
+  }
+  
+  /* Product title styling */
+  .product-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 10px 0 10px; /* Adds space above and below the title */
+    color: #333;
+  }
+  
+  /* Product price styling */
+  .product-card p {
+    font-size: 1rem;
+    color: #666; /* Light gray color for the price */
+    margin: 5px 0 15px; /* Adds space between the price and the button */
+  }
+  
+  /* Add to Cart button */
+  .product-card .add-to-cart {
+    background-color: #39c37d; /* Green background for the button */
+    color: #fff; /* White text */
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+  }
+  
+  /* Hover effect for the button */
+  .product-card .add-to-cart:hover {
+    background-color: #31a86a; /* Darker green on hover */
+    transform: translateY(-2px);
+  }
+  
+  /* Ensure Link styles don't interfere */
+  .product-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Responsive styling for smaller screens */
+  @media (max-width: 768px) {
+    .product-list {
+      justify-content: center; /* Center the products on smaller screens */
+      gap: 20px;
+    }
+  
+    .product-card {
+      flex: 1 1 100%; /* Full width on smaller screens */
+      max-width: 100%;
+    }
   }
 
-.product-detail img {
-    width: 50%;
-    max-width: 300px;
-    border-radius: 10px;
-    /* Rounded corners for the image */
-    margin-right: 20px;
+/* Assuming the products are inside a .content class or directly on body */
+body {
+    padding-top: 120px; /* Adjust based on your actual navbar height */
 }
 
-.product-detail-info {
-    flex: 1;
-}
-
-.product-detail-info h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.price {
-    font-size: 18px;
-    color: #333;
-    /* Dark color for price */
-}
-
-.availability {
-    font-size: 16px;
-    color: #666;
-    /* Medium-dark color for availability */
-    margin-bottom: 10px;
-}
-
-.description {
-    font-size: 16px;
-    color: #666;
-    /* Medium-dark color for description */
-    margin-bottom: 20px;
-}
-
-.add-to-cart {
-    background-color: #333;
-    /* Dark background for button */
-    color: #fff;
-    /* White text for contrast */
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.add-to-cart:hover {
-    background-color: #555;
-    /* Darker shade on hover */
-}

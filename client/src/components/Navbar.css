@@ -1,9 +1,9 @@
-/* Modernized Style for the navbar */
+Modernized Style for the navbar
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #000000;
+    /* background-color: #000000;  */
     /* Updated to a deep gray/blue shade */
     color: white;
     padding: 10px 20px;
@@ -21,8 +21,8 @@ nav {
 }
 
 ul {
-  display: flex;
-  /* flex-direction: row; */
+  display: flex; 
+  flex-direction: row;
   list-style-type: none;
   margin: 0;
   padding: 10px;
@@ -30,7 +30,7 @@ ul {
   margin-top: 10px;
   gap: 40px;
   font-size: 16px;
-}
+} 
 
 .logo {
   color: #fff;
@@ -43,4 +43,81 @@ ul {
 
 .active {
     color: greenyellow;
+} */
+
+/* Basic styling for the body */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  height: 100%;
+}
+
+/* Navbar styles */
+.navbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+  padding: 20px 0;
+}
+
+.navbar.green {
+  background-color: #004d38; /* Initial Green Color */
+}
+
+.navbar.white {
+  background-color: #fff; /* White after scroll */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+}
+
+.navbar .logo {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar.white .logo {
+  color: #004d38; /* Logo turns green after scroll */
+}
+
+/* .nav-links {
+  list-style: none;
+  display: flex;
+} */
+
+/* .nav-links li {
+  margin-left: 30px;
+} */
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar.white .nav-links a {
+  color: #004d38; /* Link color turns green after scroll */
+}
+
+/* Ensure there's enough space for the navbar */
+.content {
+  padding-top: 100px;
+  height: 200vh; /* Extend page height to test scrolling */
+  background-color: #f4f4f4;
 }

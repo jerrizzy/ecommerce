@@ -1,0 +1,137 @@
+/* Footer overall styles */
+.footer {
+    background-color: #004d38; /* Dark green background */
+    color: #fff; /* White text */
+    padding: 40px 50px; /* Top and bottom padding */
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #f5f5f5; /* Border between sections */
+  }
+  
+  .footer-logo img {
+    width: 150px; /* Logo size */
+  }
+  
+  /* Footer links styles */
+  .footer-links {
+    margin: 0 20px;
+  }
+  
+  .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-links ul li {
+    margin-bottom: 10px;
+  }
+  
+  .footer-links ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .footer-links ul li a:hover {
+    color: #39c37d; /* Green accent on hover */
+  }
+  
+/* Wrapper for the email subscription */
+/* Footer subscription form */
+.footer-subscribe form {
+    display: flex;
+    align-items: center;
+  }
+  
+  .footer-subscribe input {
+    padding: 10px 15px;
+    border: 2px solid #39c37d; /* Green border */
+    background-color: #004d38; /* Dark green background */
+    color: #fff;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+  
+  .footer-subscribe input::placeholder {
+    color: #ccc;
+  }
+  
+  .footer-subscribe button {
+    padding: 10px 20px;
+    background-color: #39c37d; /* Green background */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .footer-subscribe button:hover {
+    background-color: #2ea66c; /* Darker green on hover */
+  }
+  
+  /* Footer social icons */
+  .footer-social a {
+    margin-right: 10px;
+    color: #fff;
+    font-size: 20px;
+  }
+  
+  .footer-social a:hover {
+    color: #39c37d; /* Green hover effect on social icons */
+  }
+  
+  /* Footer bottom section */
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    font-size: 14px;
+  }
+  
+  .footer-bottom p {
+    margin: 0;
+  }
+  
+  .footer-bottom-links a {
+    margin-left: 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .footer-bottom-links a:hover {
+    color: #39c37d; /* Green hover effect */
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .footer-top {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .footer-logo, .footer-links, .footer-subscribe, .footer-social {
+      margin-bottom: 20px;
+    }
+  
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .footer-bottom-links {
+      margin-top: 10px;
+    }
+  }
+  
