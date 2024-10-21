@@ -17,12 +17,19 @@ async function userLoader({ request, params }) {
     return res
   }
   
-  
+
   async function productListLoader({ request, params }) {
-    const res = await fetch("http://localhost:8000/products")
-      .then(resp => resp.json())
-    return res
+    const response = await fetch('https://test.myshopify.com/admin/api/2024-04/products.json', {
+      headers: {
+        'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN,
+        'Content-Type': 'application/json'
+      },
+    });
+  
+    const data = await response.json();
+    return data.products;
   }
+
   
   async function productPageLoader({ request, params }) {
     const res = await fetch(`http://localhost:8000/products/${params.id}`)
@@ -30,6 +37,7 @@ async function userLoader({ request, params }) {
     return res
   }
 
+  
 
   
   export {
