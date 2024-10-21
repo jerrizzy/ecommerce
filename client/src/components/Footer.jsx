@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-top">
         {/* Footer Logo Section */}
         <div className="footer-logo">
-          <img src="/path-to-logo.png" alt="Health-Zone Logo" />
+          {/* <img src="https://img.icons8.com/color-glass/48/twitter.png" alt="Health-Zone Logo" /> */}
         </div>
 
         {/* Navigation Links */}

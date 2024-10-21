@@ -32,7 +32,7 @@ const Navbar = () => {
 
             <ul className="nav-links">
             <NavLink to="/" exact activeClassName="active">
-                Home
+                {/* Home */}
             </NavLink>
             <NavLink to="/about" activeClassName="active">
                 About
@@ -43,7 +43,7 @@ const Navbar = () => {
             <NavLink to="/products" activeClassName="active">
                 Shop
             </NavLink>
-            <NavLink to="/cart" activeClassName="active" className="fa fa-shopping-cart">
+            <NavLink to="/cart" activeClassName="active" >
                 🛒
             </NavLink>
             </ul>

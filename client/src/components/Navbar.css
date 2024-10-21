@@ -1,13 +1,12 @@
 Modernized Style for the navbar
-.navbar {
+/* .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* background-color: #000000;  */
-    /* Updated to a deep gray/blue shade */
+    
     color: white;
     padding: 10px 20px;
-  }
+}  */
 
 nav {
   background-color: #333;
