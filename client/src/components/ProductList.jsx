@@ -2,8 +2,8 @@ import ProductCard from './ProductCard'
 import { useLoaderData } from 'react-router-dom'
 
 function ProductList() {
-  const products = useLoaderData()
-
+  const data = useLoaderData();  // Ensure you're getting the entire response object
+  const products = data.products || [];  // Extract the array from the 'products' field
   console.log(products)
 
   return (

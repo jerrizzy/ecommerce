@@ -5,7 +5,7 @@ function ProductCard({ id, product }) {
     <Link to={`/productpage/${product.id}`}>
    
     <div className="product-card">
-      <img src={product.image} alt={name} />
+      <img src={product.image} alt={product.name} />
       <h3>{product.name}</h3>
       <p>{product.price}</p>
       <button className="add-to-cart">Add to Cart</button>

@@ -16,23 +16,16 @@ async function userLoader({ request, params }) {
       })
     return res
   }
-  
 
   async function productListLoader({ request, params }) {
-    const response = await fetch('https://test.myshopify.com/admin/api/2024-04/products.json', {
-      headers: {
-        'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN,
-        'Content-Type': 'application/json'
-      },
-    });
-  
-    const data = await response.json();
-    return data.products;
+    const res = await fetch('http://localhost:3000/api/products')
+      .then(resp => resp.json())
+    return res
   }
 
   
   async function productPageLoader({ request, params }) {
-    const res = await fetch(`http://localhost:8000/products/${params.id}`)
+    const res = await fetch(`http://localhost:3000/api/products/${params.id}`)
       .then(resp => resp.json())
     return res
   }
