@@ -87,19 +87,22 @@ app.get('/api/products/:id', async (req, res) => {
       return res.status(response.status).json({ error: 'Error fetching product from Shopify' });
     }
 
+    // Ensure the product exists in the response
+    const product = data.product;  // Properly initialize the product variable from the response
+
     // Transform the product response to match the format you need
-    const product = {
-      id: data.product.id,
-      name: data.product.title,
-      image: data.product.image ? data.product.image.src : '',
-      price: data.product.variants[0]?.price || 0,
-      description: data.product.body_html.replace(/(<([^>]+)>)/gi, ""),
-      brand: data.product.vendor,
-      quantity: data.product.variants[0]?.inventory_quantity || 0,
+    const transformedProduct = {
+      id: product.id,
+      name: product.title,
+      image: product.image ? product.image.src : '',
+      price: product.variants[0]?.price || 0,
+      description: product.body_html ? product.body_html.replace(/(<([^>]+)>)/gi, "") : "No description available",
+      brand: product.vendor,
+      quantity: product.variants[0]?.inventory_quantity || 0,
       variant_id: product.variants[0]?.id,  // Ensure the variant_id is passed to the frontend
     };
 
-    res.status(200).json(product);  // Send the transformed product data back
+    res.status(200).json(transformedProduct);  // Send the transformed product data back
   } catch (error) {
     console.error('Error fetching product:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -113,34 +116,39 @@ app.post('/api/create-checkout', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Keep token hidden
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
       },
       body: JSON.stringify({
         checkout: {
-          line_items: []  // Initially empty
+          line_items: []  // Initially, an empty checkout
         }
       })
     });
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error('Error response from Shopify:', errorResponse);
-      return res.status(response.status).json({ error: 'Failed to create checkout', details: errorResponse });
-    }
 
     const data = await response.json();
-    res.status(200).json(data.checkout);
+
+    if (!response.ok) {
+      console.error('Error from Shopify API:', data);
+      return res.status(response.status).json({ error: 'Failed to create checkout' });
+    }
+
+    console.log('Checkout object returned from Shopify:', data);  // Debug log to check the response
+
+    // Return the checkout object, including the checkout ID
+    res.status(200).json({ token: data.checkout.token });  // Return the checkout token for use in the frontend
   } catch (error) {
     console.error('Error creating checkout:', error);
-    res.status(500).json({ error: 'Failed to create checkout' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+
 // Route to add items to the checkout
 app.put('/api/add-to-cart', async (req, res) => {
-  const { checkoutId, variantId, quantity } = req.body;
+  const { checkoutToken, variantId, quantity } = req.body;
 
   try {
-    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/checkouts/${checkoutId}.json`, {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/checkouts/${checkoutToken}.json`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
