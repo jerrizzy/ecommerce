@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useOutletContext } from "react-router-dom"
 
 function Cart() {
   const [checkoutId, setCheckoutId] = useState(null);
-  const [cart, setCart] = useState([]);
+  const { cart, setCart } = useOutletContext();
 
-  useEffect(() => {
-    // Retrieve checkout ID and cart items from localStorage or state
-    const savedCheckoutId = localStorage.getItem('checkoutId');
-    const savedCart = JSON.parse(localStorage.getItem('cart'));
-    if (savedCheckoutId) setCheckoutId(savedCheckoutId);
-    if (savedCart) setCart(savedCart);
-  }, []);
+  console.log(cart)
+
+
 
   const handleCheckout = () => {
     // Redirect to Shopify checkout page

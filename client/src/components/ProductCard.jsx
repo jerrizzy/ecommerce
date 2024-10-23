@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Link } from "react-router-dom"
+import { Link, useOutletContext } from "react-router-dom"
 
 function ProductCard({ id, product }) {
+  const { setCart } = useOutletContext();
   // State to manage whether the product is added to the cart
   const [checkoutToken, setCheckoutToken] = useState(null);  // Use token as checkout ID
-  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
+  
 
   // Create checkout when the component mounts
   useEffect(() => {
@@ -64,6 +65,8 @@ function ProductCard({ id, product }) {
 
       const updatedCheckout = await response.json();
       console.log('Item added to cart:', updatedCheckout.line_items);
+      setCart(updatedCheckout.line_items);  // Update the cart state with the new line items
+      console.log('Item updated to cart:', updatedCheckout)
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -77,6 +80,10 @@ function ProductCard({ id, product }) {
       <p>${product.price}</p>
       </Link>
       <button
+      type="button"  // Use a button for simplicity, but you could use a link or a custom button component for more complex scenarios  
+      // or Use the loading state to disable the button while the checkout is being initialized or the item is being added to the cart  
+      // or Use the disabled prop to prevent the button from being clicked while the checkout is still being initialized or the item is being added to the cart  
+      // or Add a loading state to the button to indicate that the checkout is being initialized or the
       disabled={loading}  // Disable if still loading
       onClick={handleAddToCart} 
       className="add-to-cart">
