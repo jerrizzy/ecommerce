@@ -1,4 +1,5 @@
 import express from 'express';
+import fetch from 'node-fetch'; // Needed for making API requests in Node.js
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Needed for __dirname in ES modules
@@ -44,7 +45,7 @@ app.get('/api/products', async (req, res) => {
     }
 
     // Transform the Shopify response to match your mock API structure
-    const transformedProducts = data.map.products((product) => {
+    const transformedProducts = data.products.map((product) => {
       return {
         id: product.id, // Shopify's product ID
         name: product.title, // Shopify's product title
@@ -103,6 +104,60 @@ app.get('/api/products/:id', async (req, res) => {
   }
 });
 
+// Route to create checkout (cart)
+app.post('/api/create-checkout', async (req, res) => {
+  try {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/checkouts.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Keep token hidden
+      },
+      body: JSON.stringify({
+        checkout: {
+          line_items: []  // Initially empty
+        }
+      })
+    });
+
+    const data = await response.json();
+    res.status(200).json(data.checkout);
+  } catch (error) {
+    console.error('Error creating checkout:', error);
+    res.status(500).json({ error: 'Failed to create checkout' });
+  }
+});
+
+// Route to add items to the checkout
+app.put('/api/add-to-cart', async (req, res) => {
+  const { checkoutId, variantId, quantity } = req.body;
+
+  try {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/checkouts/${checkoutId}.json`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Hidden token
+      },
+      body: JSON.stringify({
+        checkout: {
+          line_items: [
+            {
+              variant_id: variantId,
+              quantity: quantity,
+            }
+          ]
+        }
+      })
+    });
+
+    const data = await response.json();
+    res.status(200).json(data.checkout);
+  } catch (error) {
+    console.error('Error adding item to cart:', error);
+    res.status(500).json({ error: 'Failed to add item to cart' });
+  }
+});
 
 
 // Serve static files from the React build directory
