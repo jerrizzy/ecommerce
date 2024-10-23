@@ -54,7 +54,8 @@ app.get('/api/products', async (req, res) => {
         // Add a check for body_html to avoid calling .replace() on null or undefined
         description: product.body_html ? product.body_html.replace(/(<([^>]+)>)/gi, "") : "No description available", // Strip HTML from description
         brand: product.vendor || '', // Shopify's vendor
-        quantity: product.variants[0]?.inventory_quantity || 0 // Shopify's inventory quantity for the first variant
+        quantity: product.variants[0]?.inventory_quantity || 0, // Shopify's inventory quantity for the first variant
+        variant_id: product.variants[0]?.id,  // Ensure the variant_id is passed to the frontend
       };
     });
 
@@ -95,6 +96,7 @@ app.get('/api/products/:id', async (req, res) => {
       description: data.product.body_html.replace(/(<([^>]+)>)/gi, ""),
       brand: data.product.vendor,
       quantity: data.product.variants[0]?.inventory_quantity || 0,
+      variant_id: product.variants[0]?.id,  // Ensure the variant_id is passed to the frontend
     };
 
     res.status(200).json(product);  // Send the transformed product data back
@@ -107,7 +109,7 @@ app.get('/api/products/:id', async (req, res) => {
 // Route to create checkout (cart)
 app.post('/api/create-checkout', async (req, res) => {
   try {
-    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/checkouts.json`, {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/checkouts.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -119,6 +121,11 @@ app.post('/api/create-checkout', async (req, res) => {
         }
       })
     });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error('Error response from Shopify:', errorResponse);
+      return res.status(response.status).json({ error: 'Failed to create checkout', details: errorResponse });
+    }
 
     const data = await response.json();
     res.status(200).json(data.checkout);

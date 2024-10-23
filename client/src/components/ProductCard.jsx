@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from "react-router-dom"
 
 function ProductCard({ id, product }) {
@@ -8,8 +9,9 @@ function ProductCard({ id, product }) {
   // Create checkout if not already created
   useEffect(() => {
     const fetchCheckout = async () => {
-      const response = await fetch('/api/create-checkout', { method: 'POST' });
+      const response = await fetch('http://localhost:3000/api/create-checkout', { method: 'POST' });
       const checkout = await response.json();
+      console.log('Checkout created:', checkout);  // Log the checkout object
       setCheckoutId(checkout.id);  // Save checkout ID
     };
 
@@ -28,7 +30,7 @@ function ProductCard({ id, product }) {
 
     const variantId = product.variants[0].id;  // Get the variant ID
     const quantity = 1;  // You can change this to dynamic quantity
-    const response = await fetch('/api/add-to-cart', {
+    const response = await fetch('http://localhost:3000/api/add-to-cart', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -47,16 +49,18 @@ function ProductCard({ id, product }) {
 
 
   return (
-    <Link to={`/productpage/${product.id}`}>
+    
    
     <div className="product-card">
+      <Link to={`/productpage/${product.id}`}>
       <img src={product.image} alt={product.name} />
       <h3>{product.name}</h3>
       <p>{product.price}</p>
+      </Link>
       <button onClick={handleAddToCart} className="add-to-cart">Add to Cart</button>
     </div>
 
-    </Link>
+  
   )
 }
 
