@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useOutletContext } from "react-router-dom"
+import { useOutletContext, Link } from "react-router-dom"
 
 function Cart() {
   const [checkoutId, setCheckoutId] = useState(null);
@@ -20,11 +20,13 @@ function Cart() {
       <ul>
         {cart.length > 0 ? (
           cart.map((item, index) => (
+            <Link to={`/productpage/${item.id}`}>
             <li key={index}>
               <img src={item.image_url} alt={item.title} />
               <p>{item.title}</p>
               <p>Quantity: {item.quantity}</p>
             </li>
+            </Link>
           ))
         ) : (
           <p>Your cart is empty</p>

@@ -65,7 +65,7 @@ function ProductCard({ id, product }) {
 
       const updatedCheckout = await response.json();
       console.log('Item added to cart:', updatedCheckout.line_items);
-      setCart([...cart, updatedCheckout.line_items]);  // Update the cart state with the new line items
+      setCart([...cart, ...updatedCheckout.line_items]);  // Update the cart state with the new line items
       console.log('Item updated to cart:', updatedCheckout)
     } catch (error) {
       console.error('Error adding to cart:', error);
