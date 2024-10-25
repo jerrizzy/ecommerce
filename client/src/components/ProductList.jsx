@@ -1,5 +1,5 @@
 import ProductCard from './ProductCard'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, Outlet } from 'react-router-dom'
 
 function ProductList() {
   const data = useLoaderData();  // Ensure you're getting the entire response object

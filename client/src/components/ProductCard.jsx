@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useOutletContext } from "react-router-dom"
 
 function ProductCard({ id, product }) {
-  const { setCart } = useOutletContext();
+  const { cart, setCart } = useOutletContext();
   // State to manage whether the product is added to the cart
   const [checkoutToken, setCheckoutToken] = useState(null);  // Use token as checkout ID
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
@@ -65,7 +65,7 @@ function ProductCard({ id, product }) {
 
       const updatedCheckout = await response.json();
       console.log('Item added to cart:', updatedCheckout.line_items);
-      setCart(updatedCheckout.line_items);  // Update the cart state with the new line items
+      setCart([...cart, updatedCheckout.line_items]);  // Update the cart state with the new line items
       console.log('Item updated to cart:', updatedCheckout)
     } catch (error) {
       console.error('Error adding to cart:', error);

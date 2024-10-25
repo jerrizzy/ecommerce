@@ -6,9 +6,11 @@ import { Outlet, useLoaderData } from "react-router-dom"
 
 
 function App() {
-  const [cart, setCart] = useState();
+  const [cart, setCart] = useState([]);
   
   const user = useLoaderData()
+
+  console.log('cart', cart)
 
   return (
     <div>
@@ -16,7 +18,7 @@ function App() {
      
 
       <div className="container">
-      <Outlet context={{ cart, setCart }} />
+      <Outlet context={{ cart, setCart}} />
       </div>
 
       <Footer />
