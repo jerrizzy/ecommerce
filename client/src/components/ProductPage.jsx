@@ -6,6 +6,7 @@ function ProductPage() {
   const [foundProduct, setFoundProduct] = ([])
   const products = useLoaderData() // Fetch the specific product
   console.log(products)
+  
 
   // Find the product that matches the id from the URL from useParams 
   // (we'd use this method only if useLoader was not specified)

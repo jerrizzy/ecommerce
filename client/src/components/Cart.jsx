@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, Link } from "react-router-dom"
+import "./Cart.css";
 
 function Cart() {
   const [checkoutId, setCheckoutId] = useState(null);
@@ -15,24 +16,34 @@ function Cart() {
   };
 
   return (
-    <div>
-      <h2>Your Cart</h2>
-      <ul>
-        {cart.length > 0 ? (
-          cart.map((item, index) => (
-            <Link to={`/productpage/${item.id}`}>
-            <li key={index}>
-              <img src={item.image_url} alt={item.title} />
-              <p>{item.title}</p>
-              <p>Quantity: {item.quantity}</p>
-            </li>
-            </Link>
-          ))
-        ) : (
-          <p>Your cart is empty</p>
-        )}
-      </ul>
-      <button onClick={handleCheckout}>Go to Checkout</button>
+    <div className="shopping-cart">
+      <h2>Your Shopping Cart</h2>
+      {cart.length > 0 ? (
+        cart.map((item, index) => (
+          <div className="cart-item" key={index}>
+            <div className="cart-item-image">
+              <img src={item.image_url || 'placeholder.jpg'} alt={item.title || 'Product'} />
+            </div>
+            <div className="cart-item-details">
+              <h3>{item.title}</h3>
+              <p className="cart-item-price">${item.price}</p>
+              <p>In Stock</p>
+              <p>Quantity: <select defaultValue={item.quantity}>
+                {[...Array(10).keys()].map(num => (
+                  <option key={num + 1} value={num + 1}>{num + 1}</option>
+                ))}
+              </select></p>
+              <div className="cart-item-actions">
+                <button className="cart-item-delete">Delete</button>
+                <button className="cart-item-save">Save for later</button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p>Your cart is empty</p>
+      )}
+      <button className="checkout-btn" onClick={handleCheckout}>Proceed to Checkout</button>
     </div>
   );
 }
