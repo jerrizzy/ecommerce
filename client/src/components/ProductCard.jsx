@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useOutletContext } from "react-router-dom"
 
 function ProductCard({ id, product }) {
-  const { cart, setCart } = useOutletContext();
-  // State to manage whether the product is added to the cart
-  const [checkoutToken, setCheckoutToken] = useState(null);  // Use token as checkout ID
+  const { cart, setCart, checkoutToken, setCheckoutToken } = useOutletContext(); 
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
   
 

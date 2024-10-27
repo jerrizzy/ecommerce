@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext, Link } from "react-router-dom"
 import "./Cart.css";
 
+// TODO: link a product back to its product page
+
 function Cart() {
-  const [checkoutId, setCheckoutId] = useState(null);
-  const { cart, setCart } = useOutletContext();
+  const { cart, checkoutToken } = useOutletContext();
 
   console.log('in the cart: ', cart)
 
   const handleCheckout = () => {
     // Redirect to Shopify checkout page
-    if (checkoutId) {
-      window.location.href = `https://quickstart-f138a90f.myshopify.com/checkouts/${checkoutId}`;
+    if (checkoutToken) {
+      window.location.href = `https://quickstart-f138a90f.myshopify.com/checkouts/${checkoutToken}`;
+    } else {
+      console.error("Checkout token is missing!");
     }
   };
 
@@ -22,7 +25,7 @@ function Cart() {
         cart.map((item, index) => (
           <div className="cart-item" key={index}>
             <div className="cart-item-image">
-              <img src={item.image_url || 'placeholder.jpg'} alt={item.title || 'Product'} />
+              <img src={item.image_url} alt={item.title} />
             </div>
             <div className="cart-item-details">
               <h3>{item.title}</h3>

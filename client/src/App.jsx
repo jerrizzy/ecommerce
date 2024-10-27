@@ -7,6 +7,8 @@ import { Outlet, useLoaderData } from "react-router-dom"
 
 function App() {
   const [cart, setCart] = useState([]);
+  // State to manage whether the product is added to the cart
+  const [checkoutToken, setCheckoutToken] = useState(null) // Use token as checkout ID
   
   const user = useLoaderData()
 
@@ -18,7 +20,7 @@ function App() {
      
 
       <div className="container">
-      <Outlet context={{ cart, setCart}} />
+      <Outlet context={{ cart, setCart, checkoutToken, setCheckoutToken }} />
       </div>
 
       <Footer />
