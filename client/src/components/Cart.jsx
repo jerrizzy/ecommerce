@@ -48,7 +48,7 @@ function Cart() {
           </div>
         ))
       ) : (
-        <p>Your cart is empty</p>
+        <p style={{color: 'green'}} >Your cart is empty</p>
       )}
       <button className="checkout-btn" onClick={handleCheckout}>Proceed to Checkout</button>
     </div>

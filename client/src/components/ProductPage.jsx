@@ -5,7 +5,7 @@ function ProductPage() {
   // const { id } = useParams(); // we get the id from the URL parameters using this hook, and we capture the dynamic part of the URL that identifies a specific restaurant
   const [foundProduct, setFoundProduct] = ([])
   const products = useLoaderData() // Fetch the specific product
-  console.log(products)
+  console.log('productspage:', products)
   
 
   // Find the product that matches the id from the URL from useParams 

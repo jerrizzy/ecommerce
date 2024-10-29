@@ -4,7 +4,7 @@ import { Link, useOutletContext } from "react-router-dom"
 function ProductCard({ id, product }) {
   const { cart, setCart, checkoutToken, setCheckoutToken } = useOutletContext(); 
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
-  
+  console.log("product quantity:", product)
 
   // Create checkout when the component mounts
   useEffect(() => {
