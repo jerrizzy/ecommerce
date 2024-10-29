@@ -28,11 +28,11 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${scrolled ? 'white' : 'green'}`}>
     <div className="navbar-container">
-        <h1 className="logo">Health-zone</h1>
+        <h1 className="logo">Herbs For Life</h1>
 
             <ul className="nav-links">
             <NavLink to="/" exact activeClassName="active">
-                {/* Home */}
+                Home
             </NavLink>
             <NavLink to="/about" activeClassName="active">
                 About

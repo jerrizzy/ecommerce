@@ -8,11 +8,15 @@ function Cart() {
   const { cart, checkoutToken } = useOutletContext();
 
   console.log('in the cart: ', cart)
+  console.log('Redirecting with checkout token:', checkoutToken);
+
+  const password = 'giclab';
+
 
   const handleCheckout = () => {
     // Redirect to Shopify checkout page
     if (checkoutToken) {
-      window.location.href = `https://quickstart-f138a90f.myshopify.com/checkouts/${checkoutToken}`;
+      window.location.href = `https://quickstart-f138a90f.myshopify.com/checkouts/${checkoutToken}?password=${password}`;
     } else {
       console.error("Checkout token is missing!");
     }

@@ -1,6 +1,7 @@
 import './App.css';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
+import Home from './components/Home';
 import { useState } from 'react'
 import { Outlet, useLoaderData } from "react-router-dom"
 
@@ -17,8 +18,9 @@ function App() {
   return (
     <div>
       <Navbar  />
-     
 
+      {/* Replace 'Home' with the actual page component */}
+      
       <div className="container">
       <Outlet context={{ cart, setCart, checkoutToken, setCheckoutToken }} />
       </div>

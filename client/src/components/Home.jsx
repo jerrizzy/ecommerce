@@ -1,12 +1,16 @@
 import React from 'react'
+import './Home.css';
 
 function Home() {
   return (
-      <div className="banner">
-        <h1>Welcome to Health-Zone</h1>
-        <p>The ultimate destination for your health.</p>
-        <button>Explore Now</button>
-      </div>
+    <div className="home-background">
+    <div className="home-content">
+      {/* Place all your content here */}
+      <h1>Welcome to Our Store</h1>
+      <a  href="/products"><button  className="bn632-hover bn19">Explore!</button></a>
+      <p>Discover our fresh, healthy products!</p>
+    </div>
+  </div>
   )
 }
 
