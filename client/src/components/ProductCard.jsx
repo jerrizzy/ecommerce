@@ -5,7 +5,9 @@ function ProductCard({ id, product }) {
   const { cart, setCart, checkoutToken, setCheckoutToken } = useOutletContext(); 
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
   console.log("product quantity:", product)
+  const [quantity, setQuantity] = useState(product.quantity || 0); // To track
 
+  
   // Create checkout when the component mounts
   useEffect(() => {
     const fetchCheckout = async () => {
@@ -77,6 +79,7 @@ function ProductCard({ id, product }) {
       <h3>{product.name}</h3>
       <p>${product.price}</p>
       </Link>
+      {quantity > 0 ? (
       <button
       type="button"  // Use a button for simplicity, but you could use a link or a custom button component for more complex scenarios  
       // or Use the loading state to disable the button while the checkout is being initialized or the item is being added to the cart  
@@ -85,7 +88,13 @@ function ProductCard({ id, product }) {
       disabled={loading}  // Disable if still loading
       onClick={handleAddToCart} 
       className="add-to-cart">
-      {loading ? 'Initializing...' : 'Add to Cart'}</button>
+      {loading ? 'Initializing...' : 'Add to Cart'}</button> ) : ( 
+    <button 
+    style={{color: 'red'}}
+    type="button"
+    disabled='true'
+    className="add-to-cart">
+    Out of Stock</button> )}
     </div>
 
   
