@@ -30,11 +30,24 @@ async function userLoader({ request, params }) {
     return res
   }
 
+
+  async function blogListLoader({ request, params }) {
+    const res = await fetch('http://localhost:3000/api/blogs')
+      .then(resp => resp.json())
+    return res
+  }
   
+  async function blogCardLoader({ request, params }) {
+    const res = await fetch(`http://localhost:3000/api/blogs/${params.id}/articles`)
+      .then(resp => resp.json())
+    return res
+  }
 
   
   export {
+    blogCardLoader,
     userLoader, 
     productListLoader,
     productPageLoader,
+    blogListLoader
   }

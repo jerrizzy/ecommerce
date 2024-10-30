@@ -174,6 +174,59 @@ app.put('/api/add-to-cart', async (req, res) => {
   }
 });
 
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/blogs.json`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN, // Use Admin API Access Token
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error from Shopify API:', data);
+      return res.status(response.status).json({ error: 'Failed to fetch blogs' });
+    }
+
+    // Return the blogs
+    res.status(200).json({ blogs: data.blogs }); // Adjust response to return blogs directly
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/api/blogs/:blogId/articles', async (req, res) => {
+  const { blogId } = req.params;
+  try {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/blogs/${blogId}/articles.json`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
+      }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error from Shopify API:', errorText);
+      return res.status(response.status).json({ error: 'Failed to fetch articles' });
+    }
+
+    const data = await response.json();
+    res.status(200).json(data.articles); // Send articles directly in the response
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 // Serve static files from the React build directory
 app.use(express.static(path.join(__dirname, 'build')));

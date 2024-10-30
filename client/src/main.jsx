@@ -11,11 +11,14 @@ import NewProduct from './components/NewProduct.jsx'
 import Cart from './components/Cart'
 import Login from './components/Login'
 import Logout from './components/Logout'
+import BlogList from './components/BlogList'
+import BlogCard from './components/BlogCard'
 import './index.css'
 import { 
-  userLoader,
+  blogListLoader,
   productListLoader,
   productPageLoader,
+  blogCardLoader
  
 } from './loaders.js'
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
@@ -49,13 +52,19 @@ const router = createBrowserRouter([
         element: <Login />
       },
       {
-        path: '/logout',
-        element: <Logout />
+        path: '/blogs',
+        element: <BlogList />,
+        loader: blogListLoader
       },
       {
         path: '/productpage/:id',
         element: <ProductPage />,
         loader: productPageLoader
+      },
+      {
+        path: '/blogs/:id/articles',
+        element: <BlogCard />,
+        loader: blogCardLoader
       },
       {
         path: '/products',
