@@ -5,12 +5,27 @@ import "./Cart.css";
 // TODO: link a product back to its product page
 
 function Cart() {
-  const { cart, checkoutToken } = useOutletContext();
+  const { cart, setCart, checkoutToken } = useOutletContext();
 
   console.log('in the cart: ', cart)
   console.log('Redirecting with checkout token:', checkoutToken);
 
   const password = 'giclab';
+
+  const handleDelete = (id) => {
+    // Delete item from the cart
+    // TODO: implement the logic to delete an item from the cart
+    const updatedCart = cart.filter((item) => item.id !== id);
+
+    setCart(updatedCart);
+    
+  };
+
+  const handleSaveForLater = () => {
+    // Save item for later
+    // TODO: implement the logic to save an item for later
+  };
+  
 
 
   const handleCheckout = () => {
@@ -41,7 +56,7 @@ function Cart() {
                 ))}
               </select></p>
               <div className="cart-item-actions">
-                <button className="cart-item-delete">Delete</button>
+                <button type='button' onClick={() => handleDelete(item.id)} className="cart-item-delete">Delete</button>
                 <button className="cart-item-save">Save for later</button>
               </div>
             </div>
