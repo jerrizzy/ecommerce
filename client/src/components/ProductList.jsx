@@ -4,7 +4,7 @@ import { useLoaderData, Outlet } from 'react-router-dom'
 function ProductList() {
   const data = useLoaderData();  // Ensure you're getting the entire response object
   const products = data.products || [];  // Extract the array from the 'products' field
-  console.log(products)
+  console.log('products from productList:',products)
 
   return (
     <div>

@@ -4,40 +4,15 @@ import { Link, useOutletContext } from "react-router-dom"
 function ProductCard({ id, product }) {
   const { cart, setCart, checkoutToken, setCheckoutToken } = useOutletContext(); 
   const [loading, setLoading] = useState(true);  // To track if checkout is still being initialized
-  console.log("product quantity:", product)
+  console.log("product with quantity field:", product)
   const [quantity, setQuantity] = useState(product.quantity || 0); // To track
 
-  
-  // Create checkout when the component mounts
   useEffect(() => {
-    const fetchCheckout = async () => {
-      try {
-        console.log('Starting checkout creation...');
+    setQuantity(product.quantity || 0); // Update quantity if product quantity changes
+  }, [product.quantity]);  
 
-        // Send request to create checkout
-        const response = await fetch('http://localhost:3000/api/create-checkout', {
-          method: 'POST',
-        });
-
-        const data = await response.json();
-        console.log('Checkout token from server:', data.token);  // Log the checkout token
-
-        // Ensure token is set
-        if (data.token) {
-          setCheckoutToken(data.token);  // Save the checkout token in state
-          setLoading(false);  // Stop loading once checkout is created
-        } else {
-          console.error('Checkout token is missing from the response');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error creating checkout:', error);
-        setLoading(false);  // Stop loading even if there's an error
-      }
-    };
-
-    fetchCheckout();
-  }, []);  // Only run this once when the component mounts
+  
+  
 
   // Handle adding item to cart
   const handleAddToCart = async () => {
@@ -45,7 +20,6 @@ function ProductCard({ id, product }) {
       console.error('Checkout not initialized');
       return;
     }
-
     const variantId = product.variant_id;  // Use the product variant ID
 
     try {
@@ -64,13 +38,27 @@ function ProductCard({ id, product }) {
       });
 
       const updatedCheckout = await response.json();
+      setLoading(false);  // Update loading state to false when checkout is initialized and item is added to the cart
+      console.log('Checkout updated after adding item:', updatedCheckout);  // Log the updated checkout data to console for debugging
       console.log('Item added to cart:', updatedCheckout.line_items);
-      setCart([...cart, ...updatedCheckout.line_items]);  // Update the cart state with the new line items
-      console.log('Item updated to cart:', updatedCheckout)
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    }
-  };
+
+      // Map the Shopify response to match the simplified product structure
+    const newCartItems = updatedCheckout.line_items.map(item => ({
+      id: item.id,                  // Shopify item ID
+      name: item.title,             // Title from Shopify response
+      price: item.price,            // Price from Shopify response
+      image: item.image_url,        // Match to your 'product.image' format
+      quantity: item.quantity,      // Quantity in the cart
+      variant_id: item.variant_id,  // Variant ID for reference
+    }));
+
+    // Update cart state with unified data structure
+    setCart([...cart, ...newCartItems]);
+
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+  }
+};
 
   return (
     <div className="product-card">
@@ -88,13 +76,15 @@ function ProductCard({ id, product }) {
       disabled={loading}  // Disable if still loading
       onClick={handleAddToCart} 
       className="add-to-cart">
-      {loading ? 'Initializing...' : 'Add to Cart'}</button> ) : ( 
-    <button 
-    style={{color: 'red'}}
-    type="button"
-    disabled='true'
-    className="add-to-cart">
-    Out of Stock</button> )}
+      {loading ? 'Initializing...' : 'Add to Cart'}</button> 
+      ) 
+      : 
+      ( <button 
+        style={{color: 'red'}}
+        type="button"
+        disabled='true'
+        className="add-to-cart">
+        Out of Stock</button> )}
     </div>
 
   
