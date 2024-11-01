@@ -5,9 +5,10 @@ import "./Cart.css";
 // TODO: link a product back to its product page
 
 function Cart() {
-  const { cart, setCart, checkoutToken, dataProduct, setDataProduct } = useOutletContext();
+  const { productList, cart, setCart, checkoutToken } = useOutletContext();
   const [subtotal, setSubtotal] = useState(0);
 
+  console.log('ProductList: ', productList)
   console.log('in the cart: ', cart)
   console.log('Redirecting with checkout token:', checkoutToken);
 
@@ -29,12 +30,21 @@ function Cart() {
 
   const handleQuantityChange = (e, itemId) => {
     const newQuantity = parseInt(e.target.value, 10);
+
+    console.log('Looking for itemId:', itemId);
+    console.log('Product List IDs:', productList.map(item => item.id));
   
-    // Find the item in the cart by ID to check available stock
-    const item = cart.find(item => item.id === itemId);
+    // Find the product in productList to check stock availability
+    const cartItem = cart.find(item => item.id === itemId);
+    const product = productList.find(item => item.id === cartItem.originalProductId);
+
+    if (!product) {
+      console.error('Product not found for itemId:', itemId);
+      return;
+    }
     
     // Check if new quantity exceeds available stock
-    if (newQuantity > item.quantity) { // Assuming 'availableStock' is the correct key for stock
+    if (newQuantity > product.quantity) { 
       alert('Quantity exceeds available stock');
       return; // Exit the function to avoid updating the cart
     }

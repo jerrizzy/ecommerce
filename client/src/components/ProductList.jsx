@@ -1,15 +1,15 @@
 import ProductCard from './ProductCard'
-import { useLoaderData, Outlet } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
+import { useState } from 'react';
 
 function ProductList() {
-  const data = useLoaderData();  // Ensure you're getting the entire response object
-  const products = data.products || [];  // Extract the array from the 'products' field
-  console.log('products from productList:',products)
+  const { productList } = useOutletContext();
+
 
   return (
     <div>
       <div className="product-list">
-        {products.map((product) => (
+        {productList.map((product) => (
           <ProductCard 
           key={product.id}
           product={product}
