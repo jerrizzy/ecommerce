@@ -21,6 +21,7 @@ After securing the API token key, create a file named .env within the server/ di
 //  /server/.env
 
 SHOPIFY_ADMIN_ACCESS_TOKEN=your-admin-access-token-here
+
 SHOPIFY_SHOP_DOMAIN=your-store-domain.myshopify.com
 
 To set up the server, you need to first install npm package => npm install in the server/ directory
