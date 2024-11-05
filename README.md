@@ -16,7 +16,7 @@ https://www.loom.com/share/61f34f6d55404d87844014f80641b44b?sid=6dbf8d87-f810-4e
 
 Note that you will need a Shopify API key to run a local copy. This requires a Shopify account. Shopify provides account for testing purposes.
 
-After securing the API token key, create a file named .env within the server/ directory, and add your key as follows.
+After securing the API token key, create a file named .env within the server/ directory, and add your token and store name as follow.
 
 //  /server/.env
 
