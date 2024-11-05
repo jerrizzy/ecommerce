@@ -2,11 +2,11 @@
 This is an e-commerce site
 
 # Technologies Used
-React
-JavaScript
-Vanilla CSS
-Shopify API
-Express
+-React
+-JavaScript
+-Vanilla CSS
+-Shopify API
+-Express
 
 Note that you will need a Shopify API key to run a local copy. This requires a Shopify account. Shopify provides account for testing purposes.
 
