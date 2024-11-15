@@ -5,14 +5,15 @@ import "./Cart.css";
 // TODO: link a product back to its product page
 
 function Cart() {
-  const { productList, cart, setCart, checkoutToken } = useOutletContext();
+  const { productList, cart, setCart, checkoutToken, checkoutUrl } = useOutletContext();
   const [subtotal, setSubtotal] = useState(0);
 
   console.log('ProductList: ', productList)
   console.log('in the cart: ', cart)
   console.log('Redirecting with checkout token:', checkoutToken);
+  console.log('Redirecting to checkout URL:', checkoutUrl);
 
-  const password = 'giclab';
+
 
   // Calculate subtotal whenever the cart changes
   useEffect(() => {
@@ -75,7 +76,7 @@ function Cart() {
   const handleCheckout = () => {
     // Redirect to Shopify checkout page
     if (checkoutToken) {
-      window.location.href = `https://quickstart-f138a90f.myshopify.com/checkouts/${checkoutToken}?password=${password}`;
+      window.location.href = `https://1qdctu-rm.myshopify.com/checkouts/${checkoutToken}`;
     } else {
       console.error("Checkout token is missing!");
     }
@@ -89,8 +90,8 @@ function Cart() {
       {cart.map((item, index) => (
         <div className="cart-item" key={index}>
           <div className="cart-item-image">
-            <Link to={`/productpage/${item.id}`}>
-              <img src={item.image_url} alt={item.title} />
+            <Link to={`/productpage/${item.originalProductId}`}>
+              <img src={item.image} alt={item.title} />
             </Link>
 
           </div>

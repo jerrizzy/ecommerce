@@ -11,8 +11,6 @@ function ProductCard({ id, product }) {
     setQuantity(product.quantity || 0); // Update quantity if product quantity changes
   }, [product.quantity]);  
 
-  
-  
 
   // Handle adding item to cart
   const handleAddToCart = async () => {

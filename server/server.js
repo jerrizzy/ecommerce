@@ -112,6 +112,7 @@ app.get('/api/products/:id', async (req, res) => {
 // Route to create checkout (cart)
 app.post('/api/create-checkout', async (req, res) => {
   try {
+    // Send a POST request to Shopify's checkout endpoint to create a checkout session
     const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/checkouts.json`, {
       method: 'POST',
       headers: {

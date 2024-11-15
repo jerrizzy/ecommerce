@@ -13,6 +13,7 @@ function App() {
   // State to manage whether the product is added to the cart
   const [checkoutToken, setCheckoutToken] = useState(null) // Use token as checkout ID
   const [productList, setProductList] = useState(products); // Store products in state
+  const [checkoutUrl, setCheckoutUrl] = useState(null)
   console.log('products from productList:',productList)
 
   console.log('cart', cart)
@@ -20,12 +21,32 @@ function App() {
   // Create checkout when the component mounts
   useEffect(() => {
     const fetchCheckout = async () => {
-      const response = await fetch('http://localhost:3000/api/create-checkout', { method: 'POST' });
-      const data = await response.json();
-      if (data.token) setCheckoutToken(data.token);
+      try {
+        const response = await fetch('http://localhost:3000/api/create-checkout', { method: 'POST' });
+        
+        // Check if response is okay before parsing JSON
+        if (!response.ok) {
+          console.error('Failed to create checkout:', response.status, response.statusText);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log('Created checkout:', data);  // Log the checkout ID to the console
+  
+        // Ensure the token is present in the data before setting it
+        if (data.token && data.web_url) {
+          setCheckoutToken(data.token) && setCheckoutUrl(data.web_url);
+        } else {
+          console.error('No token in response data:', data);
+        }
+  
+      } catch (error) {
+        console.error('Error creating checkout:', error);
+      }
     };
     fetchCheckout();
   }, []);  // Only run this once when the component mounts
+  
 
   return (
     <div>
@@ -34,7 +55,7 @@ function App() {
       {/* Replace 'Home' with the actual page component */}
       
       <div className="container">
-      <Outlet context={{ productList, setProductList, cart, setCart, checkoutToken, setCheckoutToken }} />
+      <Outlet context={{ productList, setProductList, cart, setCart, checkoutToken, setCheckoutToken, checkoutUrl }} />
       </div>
 
       <Footer />
