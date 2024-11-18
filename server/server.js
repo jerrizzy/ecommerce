@@ -113,30 +113,39 @@ app.get('/api/products/:id', async (req, res) => {
 app.post('/api/create-checkout', async (req, res) => {
   try {
     // Send a POST request to Shopify's checkout endpoint to create a checkout session
-    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/checkouts.json`, {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
       },
       body: JSON.stringify({
-        checkout: {
-          line_items: []  // Initially, an empty checkout
-        }
-      })
+        query: `
+          mutation {
+            checkoutCreate(input: {}) {
+              checkout {
+                id
+                webUrl
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `,
+      }),
     });
 
     const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Error from Shopify API:', data);
-      return res.status(response.status).json({ error: 'Failed to create checkout' });
+    
+    if (data.errors || data.data.checkoutCreate.userErrors.length > 0) {
+      console.error('Shopify API error:', data.errors || data.data.checkoutCreate.userErrors);
+      return res.status(400).json({ error: 'Failed to create checkout', details: data.errors || data.data.checkoutCreate.userErrors });
     }
 
-    console.log('Checkout object returned from Shopify:', data);  // Debug log to check the response
-
-    // Return the checkout object, including the checkout ID
-    res.status(200).json({ token: data.checkout.token });  // Return the checkout token for use in the frontend
+    const checkout = data.data.checkoutCreate.checkout;
+    res.status(200).json({ token: checkout.id, webUrl: checkout.webUrl });
   } catch (error) {
     console.error('Error creating checkout:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -153,7 +162,7 @@ app.put('/api/add-to-cart', async (req, res) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Hidden token
+        'X-Shopify-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Use Admin API token
       },
       body: JSON.stringify({
         checkout: {
@@ -168,12 +177,18 @@ app.put('/api/add-to-cart', async (req, res) => {
     });
 
     const data = await response.json();
+    if (data.errors) {
+      console.error('Shopify API error:', data.errors);
+      return res.status(400).json({ error: 'Failed to add item to checkout' });
+    }
+
     res.status(200).json(data.checkout);
   } catch (error) {
     console.error('Error adding item to cart:', error);
     res.status(500).json({ error: 'Failed to add item to cart' });
   }
 });
+
 
 app.get('/api/blogs', async (req, res) => {
   try {

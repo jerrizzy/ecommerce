@@ -17,6 +17,7 @@ function App() {
   console.log('products from productList:',productList)
 
   console.log('cart', cart)
+  
 
   // Create checkout when the component mounts
   useEffect(() => {
@@ -34,8 +35,9 @@ function App() {
         console.log('Created checkout:', data);  // Log the checkout ID to the console
   
         // Ensure the token is present in the data before setting it
-        if (data.token && data.web_url) {
-          setCheckoutToken(data.token) && setCheckoutUrl(data.web_url);
+        if (data.webUrl && data.token) {
+          setCheckoutUrl(data.webUrl);  // Store the checkout URL for use in the frontend
+          setCheckoutToken(data.token);
         } else {
           console.error('No token in response data:', data);
         }
@@ -47,6 +49,7 @@ function App() {
     fetchCheckout();
   }, []);  // Only run this once when the component mounts
   
+  console.log('Redirecting to checkout URL:', checkoutUrl);
 
   return (
     <div>
