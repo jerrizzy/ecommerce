@@ -154,40 +154,94 @@ app.post('/api/create-checkout', async (req, res) => {
 
 
 // Route to add items to the checkout
-app.put('/api/add-to-cart', async (req, res) => {
+app.post('/api/add-to-cart', async (req, res) => {
   const { checkoutToken, variantId, quantity } = req.body;
+  // Ensure required data is available
+  if (!checkoutToken || !variantId || !quantity) {
+    return res.status(400).json({ error: 'checkoutToken, variantId, and quantity are required' });
+  }
 
   try {
-    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/checkouts/${checkoutToken}.json`, {
-      method: 'PUT',
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Shopify-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Use Admin API token
       },
       body: JSON.stringify({
-        checkout: {
-          line_items: [
-            {
-              variant_id: variantId,
-              quantity: quantity,
+        query: `
+          mutation {
+            checkoutLineItemsAdd(
+              checkoutId: "${checkoutToken}",
+              lineItems: [
+                {
+                  variantId: "${variantId}",
+                  quantity: ${quantity}
+                }
+              ]
+            ) {
+              checkout {
+                id
+                webUrl
+                lineItems(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      quantity
+                      variant {
+                        id
+                        price
+                        image {
+                          src
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              userErrors {
+                field
+                message
+              }
             }
-          ]
-        }
-      })
+          }
+        `,
+      }),
     });
 
     const data = await response.json();
-    if (data.errors) {
-      console.error('Shopify API error:', data.errors);
-      return res.status(400).json({ error: 'Failed to add item to checkout' });
+
+    // Check for any errors in the response
+    if (data.errors || data.data.checkoutLineItemsAdd.userErrors.length > 0) {
+      console.error('Shopify API error:', data.errors || data.data.checkoutLineItemsAdd.userErrors);
+      return res.status(400).json({
+        error: 'Failed to add item to checkout',
+        details: data.errors || data.data.checkoutLineItemsAdd.userErrors
+      });
     }
 
-    res.status(200).json(data.checkout);
+    // Retrieve the updated checkout and line items from the response
+    const checkout = data.data.checkoutLineItemsAdd.checkout;
+    res.status(200).json(checkout);
+
   } catch (error) {
-    console.error('Error adding item to cart:', error);
-    res.status(500).json({ error: 'Failed to add item to cart' });
+    console.error('Error adding item to checkout:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+//     if (data.errors) {
+//       console.error('Shopify API error:', data.errors);
+//       return res.status(400).json({ error: 'Failed to add item to checkout' });
+//     }
+
+//     res.status(200).json(data.checkout);
+//   } catch (error) {
+//     console.error('Error adding item to cart:', error);
+//     res.status(500).json({ error: 'Failed to add item to cart' });
+//   }
+// });
 
 
 app.get('/api/blogs', async (req, res) => {
