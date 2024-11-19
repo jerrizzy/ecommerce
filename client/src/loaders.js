@@ -17,11 +17,29 @@ async function userLoader({ request, params }) {
     return res
   }
 
+  // async function productListLoader({ request, params }) {
+  //   const res = await fetch('http://localhost:3000/api/products')
+  //     .then(resp => resp.json())
+  //   return res
+  // }
   async function productListLoader({ request, params }) {
-    const res = await fetch('http://localhost:3000/api/products')
-      .then(resp => resp.json())
-    return res
+    try {
+      const response = await fetch('http://localhost:3000/api/products');
+      
+      // Handle potential errors
+      if (!response.ok) {
+        throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log("Fetched products:", data); // Debug: Log fetched data
+      return data;
+    } catch (error) {
+      console.error("Error loading product list:", error);
+      throw error; // Rethrow to handle appropriately
+    }
   }
+  
 
   
   async function productPageLoader({ request, params }) {

@@ -20,14 +20,14 @@ function ProductCard({ id, product }) {
       return;
     }
   
-    const variantId = product.variant_id;
+    const variantId = `gid://shopify/ProductVariant/${product.variant_id}`;
   
     try {
       const response = await fetch('http://localhost:3000/api/add-to-cart', {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          checkoutToken,
+          checkoutToken: `gid://shopify/Checkout/${checkoutToken}`,
           variantId,
           quantity: 1,
         })

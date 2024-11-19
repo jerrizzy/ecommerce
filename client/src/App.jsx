@@ -7,7 +7,7 @@ import { Outlet, useLoaderData } from "react-router-dom"
 
 function App() {
   const data = useLoaderData();  // Ensure you're getting the entire response object
-  const products = data.products || [];  // Extract the array from the 'products' field
+  const products = data || [];  // Extract the array from the 'products' field
   console.log('products from productList:',products)
   const [cart, setCart] = useState([]);
   // State to manage whether the product is added to the cart

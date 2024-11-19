@@ -19,7 +19,7 @@ app.use(express.json());
 
 // Custom CORS middleware to allow your React frontend to connect
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Update based on your frontend port
+  res.header('Access-Control-Allow-Origin', '*'); // Update based on your frontend port
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -27,46 +27,80 @@ app.use((req, res, next) => {
 });
 
 // Route for fetching products from Shopify API
-app.get('/api/products', async (req, res) => {
-  const shopifyUrl = `https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/products.json`;
+app.post('/api/products', async (req, res) => {
+  const shopifyUrl = `https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/graphql.json`;
 
   try {
     const response = await fetch(shopifyUrl, {
+      method: 'POST',
       headers: {
-        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
         'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
       },
+      body: JSON.stringify({
+        query: `
+          {
+            products(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  description
+                  variants(first: 10) {
+                    edges {
+                      node {
+                        id
+                        title
+                        price
+                        inventoryQuantity
+                        availableForSale
+                        image {
+                          src
+                        }
+                      }
+                    }
+                  }
+                  featuredImage {
+                    src
+                  }
+                }
+              }
+            }
+          }
+        `,
+      }),
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: 'Error fetching Shopify products' });
+    if (data.errors) {
+      console.error('Shopify API error:', data.errors);
+      return res.status(400).json({ error: 'Error fetching Shopify products', details: data.errors });
     }
 
-    // Transform the Shopify response to match your mock API structure
-    const transformedProducts = data.products.map((product) => {
-      return {
-        id: product.id, // Shopify's product ID
-        name: product.title, // Shopify's product title
-        image: product.image ? product.image.src : '', // Shopify product main image URL
-        price: product.variants[0]?.price || 0, // Shopify variant price (first variant)
-        // Add a check for body_html to avoid calling .replace() on null or undefined
-        description: product.body_html ? product.body_html.replace(/(<([^>]+)>)/gi, "") : "No description available", // Strip HTML from description
-        brand: product.vendor || '', // Shopify's vendor
-        quantity: product.variants[0]?.inventory_quantity || 0, // Shopify's inventory quantity for the first variant
-        variant_id: product.variants[0]?.id,  // Ensure the variant_id is passed to the frontend
-      };
-    });
+    const products = data.data.products.edges.map(({ node }) => ({
+      id: node.id,
+      title: node.title,
+      description: node.description,
+      image: node.featuredImage ? node.featuredImage.src : '',
+      variants: node.variants.edges.map(({ node: variant }) => ({
+        id: variant.id,
+        title: variant.title,
+        price: variant.price,
+        inventoryQuantity: variant.inventoryQuantity, // Quantity added
+        available: variant.availableForSale,
+        image: variant.image ? variant.image.src : '',
+      })),
+    }));
 
-    res.status(200).json({ products: transformedProducts });
-    console.log('Transformed product data:', transformedProducts);
-
+    res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 // Route for fetching single product by id
 app.get('/api/products/:id', async (req, res) => {
@@ -112,7 +146,7 @@ app.get('/api/products/:id', async (req, res) => {
 // Route to create checkout (cart)
 app.post('/api/create-checkout', async (req, res) => {
   try {
-    // Send a POST request to Shopify's checkout endpoint to create a checkout session
+    // Shopify GraphQL mutation for creating a checkout
     const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
       method: 'POST',
       headers: {
@@ -122,10 +156,16 @@ app.post('/api/create-checkout', async (req, res) => {
       body: JSON.stringify({
         query: `
           mutation {
-            checkoutCreate(input: {}) {
+            checkoutCreate(input: { lineItems: [] }) {
               checkout {
                 id
                 webUrl
+                createdAt
+                currencyCode
+                subtotalPriceV2 {
+                  amount
+                  currencyCode
+                }
               }
               userErrors {
                 field
@@ -138,14 +178,30 @@ app.post('/api/create-checkout', async (req, res) => {
     });
 
     const data = await response.json();
-    
-    if (data.errors || data.data.checkoutCreate.userErrors.length > 0) {
+
+    // Log the full response for debugging
+    console.log('Shopify API Response:', JSON.stringify(data, null, 2));
+
+    // Check for errors or userErrors in the response
+    if (data.errors || (data.data && data.data.checkoutCreate.userErrors.length > 0)) {
       console.error('Shopify API error:', data.errors || data.data.checkoutCreate.userErrors);
-      return res.status(400).json({ error: 'Failed to create checkout', details: data.errors || data.data.checkoutCreate.userErrors });
+      return res.status(400).json({
+        error: 'Failed to create checkout',
+        details: data.errors || data.data.checkoutCreate.userErrors,
+      });
     }
 
+    // Extract the checkout object
     const checkout = data.data.checkoutCreate.checkout;
-    res.status(200).json({ token: checkout.id, webUrl: checkout.webUrl });
+
+    // Respond with the full checkout object
+    res.status(200).json({
+      token: checkout.id,
+      webUrl: checkout.webUrl,
+      createdAt: checkout.createdAt,
+      currencyCode: checkout.currencyCode,
+      subtotalPrice: checkout.subtotalPriceV2.amount,
+    });
   } catch (error) {
     console.error('Error creating checkout:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -153,33 +209,28 @@ app.post('/api/create-checkout', async (req, res) => {
 });
 
 
+
 // Route to add items to the checkout
 app.post('/api/add-to-cart', async (req, res) => {
   const { checkoutToken, variantId, quantity } = req.body;
-  // Ensure required data is available
+
+  // Validate input
   if (!checkoutToken || !variantId || !quantity) {
-    return res.status(400).json({ error: 'checkoutToken, variantId, and quantity are required' });
+    return res.status(400).json({ error: 'Missing required fields: checkoutToken, variantId, or quantity' });
   }
 
   try {
+    // Prepare the GraphQL mutation for adding line items
     const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,  // Use Admin API token
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
       },
       body: JSON.stringify({
         query: `
-          mutation {
-            checkoutLineItemsAdd(
-              checkoutId: "${checkoutToken}",
-              lineItems: [
-                {
-                  variantId: "${variantId}",
-                  quantity: ${quantity}
-                }
-              ]
-            ) {
+          mutation checkoutLineItemsAdd($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
+            checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
               checkout {
                 id
                 webUrl
@@ -191,7 +242,10 @@ app.post('/api/add-to-cart', async (req, res) => {
                       quantity
                       variant {
                         id
-                        price
+                        priceV2 {
+                          amount
+                          currencyCode
+                        }
                         image {
                           src
                         }
@@ -207,21 +261,30 @@ app.post('/api/add-to-cart', async (req, res) => {
             }
           }
         `,
+        variables: {
+          checkoutId: `gid://shopify/Checkout/${checkoutToken}`,
+          lineItems: [
+            {
+              variantId: `gid://shopify/ProductVariant/${variantId}`,
+              quantity: parseInt(quantity, 10),
+            },
+          ],
+        },
       }),
     });
 
     const data = await response.json();
 
-    // Check for any errors in the response
+    // Handle user errors or API errors
     if (data.errors || data.data.checkoutLineItemsAdd.userErrors.length > 0) {
       console.error('Shopify API error:', data.errors || data.data.checkoutLineItemsAdd.userErrors);
       return res.status(400).json({
         error: 'Failed to add item to checkout',
-        details: data.errors || data.data.checkoutLineItemsAdd.userErrors
+        details: data.errors || data.data.checkoutLineItemsAdd.userErrors,
       });
     }
 
-    // Retrieve the updated checkout and line items from the response
+    // Extract and return the updated checkout object
     const checkout = data.data.checkoutLineItemsAdd.checkout;
     res.status(200).json(checkout);
 
@@ -230,6 +293,9 @@ app.post('/api/add-to-cart', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
 
 //     if (data.errors) {
 //       console.error('Shopify API error:', data.errors);

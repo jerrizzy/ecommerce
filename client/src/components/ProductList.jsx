@@ -4,8 +4,7 @@ import { useState } from 'react';
 
 function ProductList() {
   const { productList } = useOutletContext();
-
-
+  
   return (
     <div>
       <div className="product-list">
