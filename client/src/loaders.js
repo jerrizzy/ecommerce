@@ -24,21 +24,25 @@ async function userLoader({ request, params }) {
   // }
   async function productListLoader({ request, params }) {
     try {
-      const response = await fetch('http://localhost:3000/api/products');
-      
-      // Handle potential errors
+      const response = await fetch('http://localhost:3000/api/products', {
+        method: 'POST', // Ensure the method matches the backend route
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
       }
-      
+  
       const data = await response.json();
-      console.log("Fetched products:", data); // Debug: Log fetched data
       return data;
     } catch (error) {
-      console.error("Error loading product list:", error);
-      throw error; // Rethrow to handle appropriately
+      console.error('Error loading product list:', error);
+      throw error;
     }
   }
+  
   
 
   

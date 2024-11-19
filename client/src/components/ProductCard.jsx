@@ -5,11 +5,11 @@ function ProductCard({ id, product }) {
   const { cart, setCart, checkoutToken, setCheckoutToken } = useOutletContext(); 
   const [loading, setLoading] = useState(false);  // To track if checkout is still being initialized
   console.log("product with quantity field:", product)
-  const [quantity, setQuantity] = useState(product.quantity || 0); // To track
+  const [quantity, setQuantity] = useState(product.variants[0].inventoryQuantity || 0); // To track
 
   useEffect(() => {
-    setQuantity(product.quantity || 0); // Update quantity if product quantity changes
-  }, [product.quantity]);  
+    setQuantity(product.variants[0].inventoryQuantity || 0); // Update quantity if product quantity changes
+  }, [product.variants[0].inventoryQuantity]);  
 
 
   // Handle adding item to cart
@@ -59,8 +59,8 @@ function ProductCard({ id, product }) {
     <div className="product-card">
       <Link to={`/productpage/${product.id}`}>
       <img src={product.image} alt={product.name} />
-      <h3>{product.name}</h3>
-      <p>${product.price}</p>
+      <h3>{product.title}</h3>
+      <p>${product.variants[0].price}</p>
       </Link>
       {quantity > 0 ? (
       <button
