@@ -256,13 +256,13 @@ app.post('/api/create-checkout', async (req, res) => {
 app.post('/api/add-to-cart', async (req, res) => {
   const { checkoutToken, variantId, quantity } = req.body;
 
-  // Validate input
+  console.log('Received data:', { checkoutToken, variantId, quantity });
+
   if (!checkoutToken || !variantId || !quantity) {
     return res.status(400).json({ error: 'Missing required fields: checkoutToken, variantId, or quantity' });
   }
 
   try {
-    // Prepare the GraphQL mutation for adding line items
     const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
       method: 'POST',
       headers: {
@@ -271,7 +271,7 @@ app.post('/api/add-to-cart', async (req, res) => {
       },
       body: JSON.stringify({
         query: `
-          mutation checkoutLineItemsAdd($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
+          mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
             checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
               checkout {
                 id
@@ -284,7 +284,7 @@ app.post('/api/add-to-cart', async (req, res) => {
                       quantity
                       variant {
                         id
-                        priceV2 {
+                        price {
                           amount
                           currencyCode
                         }
@@ -304,11 +304,11 @@ app.post('/api/add-to-cart', async (req, res) => {
           }
         `,
         variables: {
-          checkoutId: `gid://shopify/Checkout/${checkoutToken}`,
+          checkoutId: checkoutToken,
           lineItems: [
             {
-              variantId: `gid://shopify/ProductVariant/${variantId}`,
-              quantity: parseInt(quantity, 10),
+              variantId,
+              quantity,
             },
           ],
         },
@@ -317,7 +317,6 @@ app.post('/api/add-to-cart', async (req, res) => {
 
     const data = await response.json();
 
-    // Handle user errors or API errors
     if (data.errors || data.data.checkoutLineItemsAdd.userErrors.length > 0) {
       console.error('Shopify API error:', data.errors || data.data.checkoutLineItemsAdd.userErrors);
       return res.status(400).json({
@@ -326,7 +325,6 @@ app.post('/api/add-to-cart', async (req, res) => {
       });
     }
 
-    // Extract and return the updated checkout object
     const checkout = data.data.checkoutLineItemsAdd.checkout;
     res.status(200).json(checkout);
 
@@ -335,8 +333,6 @@ app.post('/api/add-to-cart', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 
 //     if (data.errors) {

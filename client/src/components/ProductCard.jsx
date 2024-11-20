@@ -19,40 +19,52 @@ function ProductCard({ id, product }) {
       console.error('Checkout not initialized');
       return;
     }
-  
-    const variantId = `gid://shopify/ProductVariant/${product.variant_id}`;
-  
+
+    // Ensure variantId is formatted correctly
+    const variantId = product.variants[0].id.startsWith('gid://') 
+      ? product.variants[0].id // Use as-is if already formatted
+      : `gid://shopify/ProductVariant/${product.variants[0].id}`;
+
     try {
+      console.log('Payload being sent:', {
+        checkoutToken,
+        variantId,
+        quantity: 1,
+      });
+
       const response = await fetch('http://localhost:3000/api/add-to-cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          checkoutToken: `gid://shopify/Checkout/${checkoutToken}`,
+          checkoutToken,
           variantId,
           quantity: 1,
-        })
+        }),
       });
-  
+
       const updatedCheckout = await response.json();
-      
-      // Map the Shopify response to match the simplified product structure
-      const newCartItems = updatedCheckout.line_items.map(item => ({
-        id: item.id,                  // Shopify item ID
-        name: item.title,             // Title from Shopify response
-        price: item.price,            // Price from Shopify response
-        image: item.image_url,        // Match to your 'product.image' format
-        quantity: item.quantity,      // Quantity in the cart
-        variant_id: item.variant_id,  // Variant ID for reference
-        originalProductId: product.id, // Store original product ID here
+
+      console.log('Updated checkout:', updatedCheckout);
+
+      // Update cart state with the updated items
+      const newCartItems = updatedCheckout.lineItems.edges.map(({ node: item }) => ({
+        id: item.id,
+        name: item.title,
+        price: item.variant.price.amount, // Access `price.amount` from the nested structure
+        image: item.variant.image ? item.variant.image.src : '', // Safely access `image.src`
+        quantity: item.quantity,
+        variant_id: item.variant.id, // Variant ID for reference
+        originalProductId: product.id, // Use the product ID passed down from the component
       }));
       
-      // Update cart state with unified data structure
+
       setCart([...cart, ...newCartItems]);
-  
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
   };
+
+  
   
   const productId = product.id.split('/').pop();
   // explanation: The split method breaks a string into an array using the character you specify (/ in this case) as the delimiter.
@@ -66,7 +78,7 @@ function ProductCard({ id, product }) {
       <Link to={`/productpage/${productId}`}>
       <img src={product.image} alt={product.name} />
       <h3>{product.title}</h3>
-      <p>${product.variants[0].price}</p>
+      <p>$ {product.variants[0].price}</p>
       </Link>
       {quantity > 0 ? (
       <button

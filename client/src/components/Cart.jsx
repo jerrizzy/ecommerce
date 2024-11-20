@@ -90,7 +90,7 @@ function Cart() {
       {cart.map((item, index) => (
         <div className="cart-item" key={index}>
           <div className="cart-item-image">
-            <Link to={`/productpage/${item.originalProductId}`}>
+            <Link to={`/productpage/${item.originalProductId.split("/").pop()}`}>
               <img src={item.image} alt={item.title} />
             </Link>
 
