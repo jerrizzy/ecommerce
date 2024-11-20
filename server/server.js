@@ -103,42 +103,84 @@ app.post('/api/products', async (req, res) => {
 
 
 // Route for fetching single product by id
-app.get('/api/products/:id', async (req, res) => {
-  const productId = req.params.id;  // Get the product ID from the URL
-  const shopifyUrl = `https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/products/${productId}.json`;
+app.post('/api/products/:id', async (req, res) => {
+  const productId = req.params.id;
+
+  if (!productId) {
+    return res.status(400).json({ error: 'Product ID is required' });
+  }
 
   try {
-    const response = await fetch(shopifyUrl, {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/graphql.json`, {
+      method: 'POST',
       headers: {
-        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
         'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
       },
+      body: JSON.stringify({
+        query: `
+          query getProductById($id: ID!) {
+            product(id: $id) {
+              id
+              title
+              description
+              featuredImage {
+                src
+              }
+              variants(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    price
+                    inventoryQuantity
+                    availableForSale
+                    image {
+                      src
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          id: `gid://shopify/Product/${productId}`, // Shopify expects a global ID format
+        },
+      }),
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: 'Error fetching product from Shopify' });
+    if (data.errors) {
+      console.error('Shopify API error:', data.errors);
+      return res.status(400).json({
+        error: 'Error fetching product details',
+        details: data.errors,
+      });
     }
 
-    // Ensure the product exists in the response
-    const product = data.product;  // Properly initialize the product variable from the response
+    const product = data.data.product;
 
-    // Transform the product response to match the format you need
+    // Transform the product data to match the frontend's expected format
     const transformedProduct = {
       id: product.id,
-      name: product.title,
-      image: product.image ? product.image.src : '',
-      price: product.variants[0]?.price || 0,
-      description: product.body_html ? product.body_html.replace(/(<([^>]+)>)/gi, "") : "No description available",
-      brand: product.vendor,
-      quantity: product.variants[0]?.inventory_quantity || 0,
-      variant_id: product.variants[0]?.id,  // Ensure the variant_id is passed to the frontend
+      title: product.title,
+      description: product.description,
+      image: product.featuredImage ? product.featuredImage.src : '',
+      variants: product.variants.edges.map(({ node: variant }) => ({
+        id: variant.id,
+        title: variant.title,
+        price: variant.price,
+        inventoryQuantity: variant.inventoryQuantity,
+        available: variant.availableForSale,
+        image: variant.image ? variant.image.src : '',
+      })),
     };
 
-    res.status(200).json(transformedProduct);  // Send the transformed product data back
+    res.status(200).json(transformedProduct);
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error('Error fetching product details:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -43,13 +43,19 @@ async function userLoader({ request, params }) {
     }
   }
   
+  async function productPageLoader({ params }) {
+    const res = await fetch(`http://localhost:3000/api/products/${params.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   
-
+    if (!res.ok) {
+      throw new Error('Failed to fetch product details');
+    }
   
-  async function productPageLoader({ request, params }) {
-    const res = await fetch(`http://localhost:3000/api/products/${params.id}`)
-      .then(resp => resp.json())
-    return res
+    return res.json();
   }
 
 

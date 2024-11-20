@@ -23,11 +23,12 @@ function ProductPage() {
       <div className="product-detail">
       <img src={products.image} />
       <div className="product-detail-info">
-      <h1>{products.name}</h1>
+      <h1>{products.title}</h1>
       <p>Brand: {products.brand}</p>
       <p className="description">Description: {products.description}</p>
-      <p className="availability">Available quantity: {products.quantity}</p>
-      <p className="price">Price: ${products.price}</p>
+      <p className="availability">Available quantity: {products.variants[0].inventoryQuantity
+      }</p>
+      <p className="price">Price: ${products.variants[0].price}</p>
       <button className="add-to-cart">Add to Cart</button>
       </div>
       </div>

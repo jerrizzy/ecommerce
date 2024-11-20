@@ -54,10 +54,16 @@ function ProductCard({ id, product }) {
     }
   };
   
+  const productId = product.id.split('/').pop();
+  // explanation: The split method breaks a string into an array using the character you specify (/ in this case) as the delimiter.
+  // product.id is this string => "gid://shopify/Product/8739386589403", splitting it by / produces an array:
+  // ['gid:', '', 'shopify', 'Product', '8739386589403']
+  // The pop method removes and returns the last element of an array.
+  // In this case, the last element of the array is '8739386589403' (the numeric ID)
 
   return (
     <div className="product-card">
-      <Link to={`/productpage/${product.id}`}>
+      <Link to={`/productpage/${productId}`}>
       <img src={product.image} alt={product.name} />
       <h3>{product.title}</h3>
       <p>${product.variants[0].price}</p>
