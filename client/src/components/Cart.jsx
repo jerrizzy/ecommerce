@@ -58,13 +58,40 @@ function Cart() {
     setCart(updatedCart); // Update cart in state
   };
 
-  const handleDelete = (id) => {
-    // Delete item from the cart
-    // TODO: implement the logic to delete an item from the cart
-    const updatedCart = cart.filter((item) => item.id !== id);
-
-    setCart(updatedCart);
+  const handleDelete = async (id) => {
+    try {
+      // Send a request to Shopify to remove the item
+      const response = await fetch('http://localhost:3000/api/remove-from-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          checkoutToken,
+          lineItemId: id, // The Shopify line item ID to be removed
+        }),
+      });
+  
+      const updatedCheckout = await response.json();
+  
+      if (updatedCheckout.error) {
+        console.error('Error removing item from cart:', updatedCheckout.error);
+        return;
+      }
+  
+      // Update the cart state with the new data from Shopify
+      const newCartItems = updatedCheckout.lineItems.edges.map(({ node: item }) => ({
+        id: item.id,
+        name: item.title,
+        price: item.variant.price.amount,
+        image: item.variant.image ? item.variant.image.src : '',
+        quantity: item.quantity,
+        variant_id: item.variant.id,
+      }));
+      setCart(newCartItems); // Update the state with the updated cart
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
   };
+  
 
   const handleSaveForLater = () => {
     // Save item for later
