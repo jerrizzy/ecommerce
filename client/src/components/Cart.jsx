@@ -76,7 +76,7 @@ function Cart() {
   const handleCheckout = () => {
     // Redirect to Shopify checkout page
     if (checkoutToken) {
-      window.location.href = `https://1qdctu-rm.myshopify.com/checkouts/${checkoutToken}`;
+      window.location.href = checkoutUrl;
     } else {
       console.error("Checkout token is missing!");
     }

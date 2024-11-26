@@ -58,7 +58,7 @@ function ProductCard({ id, product }) {
       }));
       
 
-      setCart([...cart, ...newCartItems]);
+      setCart(newCartItems);
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -98,7 +98,7 @@ function ProductCard({ id, product }) {
         disabled='true'
         className="add-to-cart">
         Out of Stock</button> )}
-        < Outlet context={{ product }} />
+        {/* < Outlet context={{ product }} /> */}
     </div>
 
   
