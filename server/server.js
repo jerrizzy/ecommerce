@@ -347,6 +347,80 @@ app.post('/api/add-to-cart', async (req, res) => {
 //   }
 // });
 
+app.post('/api/remove-from-cart', async (req, res) => {
+  const { checkoutToken, lineItemId } = req.body;
+
+  if (!checkoutToken || !lineItemId) {
+    return res.status(400).json({ error: 'Missing required fields: checkoutToken or lineItemId' });
+  }
+
+  try {
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+      },
+      body: JSON.stringify({
+        query: `
+          mutation ($checkoutId: ID!, $lineItemIds: [ID!]!) {
+            checkoutLineItemsRemove(checkoutId: $checkoutId, lineItemIds: $lineItemIds) {
+              checkout {
+                id
+                webUrl
+                lineItems(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      quantity
+                      variant {
+                        id
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        image {
+                          src
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `,
+        variables: {
+          checkoutId: checkoutToken,
+          lineItemIds: [lineItemId],
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.errors || data.data.checkoutLineItemsRemove.userErrors.length > 0) {
+      console.error('Shopify API error:', data.errors || data.data.checkoutLineItemsRemove.userErrors);
+      return res.status(400).json({
+        error: 'Failed to remove item from checkout',
+        details: data.errors || data.data.checkoutLineItemsRemove.userErrors,
+      });
+    }
+
+    const checkout = data.data.checkoutLineItemsRemove.checkout;
+    res.status(200).json(checkout); // Return the updated checkout object
+  } catch (error) {
+    console.error('Error removing item from cart:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 app.get('/api/blogs', async (req, res) => {
   try {
@@ -398,8 +472,6 @@ app.get('/api/blogs/:blogId/articles', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 
 // Serve static files from the React build directory
