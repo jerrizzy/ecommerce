@@ -60,9 +60,12 @@ async function userLoader({ request, params }) {
 
 
   async function blogListLoader({ request, params }) {
-    const res = await fetch('http://localhost:3000/api/blogs')
-      .then(resp => resp.json())
-    return res
+    const res = await fetch('http://localhost:3000/api/blogs', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      }
+    })
   }
   
   async function blogCardLoader({ request, params }) {

@@ -422,25 +422,55 @@ app.post('/api/remove-from-cart', async (req, res) => {
 
 
 
-app.get('/api/blogs', async (req, res) => {
+app.post('/api/blogs', async (req, res) => {
   try {
-    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/api/2024-04/blogs.json`, {
-      method: 'GET',
+    const response = await fetch(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/api/2024-04/graphql.json`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN, // Use Admin API Access Token
-      }
+        'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN, // Correct token for Storefront API
+      },
+      body: JSON.stringify({
+        query: `
+          {
+            blog(handle: "videos") {
+              articles(first: 10) {
+                edges {
+                  node {
+                    title
+                    contentHtml
+                    publishedAt
+                    excerpt
+                    image {
+                      src
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+      }),
     });
 
     const data = await response.json();
+    console.log("raw data:", JSON.stringify(data.data.blog, null, 2));
 
-    if (!response.ok) {
-      console.error('Error from Shopify API:', data);
-      return res.status(response.status).json({ error: 'Failed to fetch blogs' });
+    if (data.errors) {
+      console.error('Error from Shopify API:', data.errors);
+      return res.status(400).json({ error: 'Failed to fetch blogs', details: data.errors });
     }
 
-    // Return the blogs
-    res.status(200).json({ blogs: data.blogs }); // Adjust response to return blogs directly
+    // Extract articles from the response
+    const articles = data.data.blog.articles.edges.map(({ node }) => ({
+      title: node.title,
+      contentHtml: node.contentHtml,
+      publishedAt: node.publishedAt,
+      excerpt: node.excerpt,
+      imageUrl: node.image ? node.image.src : null,
+    }));
+
+    res.status(200).json({ blogs: articles });
   } catch (error) {
     console.error('Error fetching blogs:', error);
     res.status(500).json({ error: 'Internal server error' });

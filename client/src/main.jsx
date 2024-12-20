@@ -52,14 +52,14 @@ const router = createBrowserRouter([
         element: <Login />
       },
       {
-        path: '/blogs',
-        element: <BlogList />,
-        loader: blogListLoader
-      },
-      {
         path: '/productpage/:id',
         element: <ProductPage />,
         loader: productPageLoader
+      },
+      {
+        path: '/blogs',
+        element: <BlogList />,
+        loader: blogListLoader
       },
       {
         path: '/blogs/:id/articles',
