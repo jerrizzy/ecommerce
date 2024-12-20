@@ -21,6 +21,7 @@ function BlogList() {
   return (
     <div>
       <div className="bloglist">
+      <h2 >Our Video Blogs</h2>
         {blogs.map((blog) => (
           <BlogCard key={blog.id} blog={blog} />
         ))}

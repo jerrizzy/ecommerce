@@ -65,7 +65,12 @@ async function userLoader({ request, params }) {
       headers: {
         'content-type': 'application/json',
       }
-    })
+    });
+    if (!res.ok) {
+      throw new Error('Failed to fetch product details');
+    }
+  
+    return res.json();
   }
   
   async function blogCardLoader({ request, params }) {
